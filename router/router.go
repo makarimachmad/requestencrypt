@@ -1,7 +1,9 @@
 package router
 
-import(
+import (
 	"net/http"
+	"requestencrypt/user"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -10,9 +12,12 @@ func SetupRoutes(r *echo.Echo){
 		return c.String(http.StatusOK, "berhasil terhubung")
 	})
 
-	// app := r.Group("/v1")
+	app := r.Group("/v1")
 
-	// p := app.Group("/pengunjung")
-	// p.GET("/login").Name = "get-login"
-	// p.POST("/registrasi").Name = "post-regist"
+	p := app.Group("/pengunjung")
+	//p.GET("/login", user.P).Name = "get-login"
+	p.POST("/registrasi", user.PostPengunjung).Name = "post-pengunjung"
+	p.GET("/", user.GetPengunjung).Name="get-pengunjung"
+	p.PATCH("/:idx", user.UpdatePengunjung).Name="update-pengunjung"
+	p.DELETE("/:idx", user.DeletePengunjung).Name="delete-pengunjung"
 }
