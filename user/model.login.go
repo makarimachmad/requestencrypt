@@ -3,6 +3,7 @@ package user
 import (
 	"errors"
 	"requestencrypt/database"
+	"requestencrypt/kriptografi"
 	"strings"
 )
 
@@ -30,7 +31,7 @@ func Auth(username, password string) (*DatabaseKeys, error){
 	if username == ""{
 		return nil, errors.New("pengguna tidak terdaftar")
 	}
-	md5pass := Md5([]byte(password))
+	md5pass := kriptografi.Md5([]byte(password))
 	if !strings.EqualFold(d.Password, md5pass){
 		return nil, errors.New("password salah")
 	}
