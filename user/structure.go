@@ -45,9 +45,3 @@ func (u *DatabaseKeys) GenPwd() {
 	hash.Write([]byte(u.Password))
 	u.Password = hex.EncodeToString(hash.Sum(nil))
 }
-
-func Md5(p []byte) string {
-	hash := md5.New()
-	hash.Write(p)
-	return hex.EncodeToString(hash.Sum(nil))
-}
