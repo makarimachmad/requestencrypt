@@ -15,7 +15,7 @@ func SetupRoutes(r *echo.Echo){
 	app := r.Group("/v1")
 
 	p := app.Group("/pengunjung")
-	//p.GET("/login", user.P).Name = "get-login"
+	p.GET("/login", user.GetLogin).Name = "get-login"
 	p.POST("/registrasi", user.PostPengunjung).Name = "post-pengunjung"
 	p.GET("/", user.GetPengunjung).Name="get-pengunjung"
 	p.PATCH("/:idx", user.UpdatePengunjung).Name="update-pengunjung"
