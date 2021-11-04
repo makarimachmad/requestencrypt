@@ -1,6 +1,9 @@
 package user
 
-import(
+import (
+	"crypto/md5"
+	"encoding/hex"
+
 	v "github.com/go-ozzo/ozzo-validation/v4"
 )
 
@@ -33,4 +36,18 @@ func (p Pengunjung) Validate() error{
 		v.Field(&p.Pekerjaan, v.Required),
 		v.Field(&p.TanggalLahir, v.Required),
 	)
+}
+
+func (u *DatabaseKeys) GenPwd() {
+	// decPass, _ := base64.StdEncoding.DecodeString(u.Password)
+	// u.Password = Md5(decPass)
+	hash := md5.New()
+	hash.Write([]byte(u.Password))
+	u.Password = hex.EncodeToString(hash.Sum(nil))
+}
+
+func Md5(p []byte) string {
+	hash := md5.New()
+	hash.Write(p)
+	return hex.EncodeToString(hash.Sum(nil))
 }
