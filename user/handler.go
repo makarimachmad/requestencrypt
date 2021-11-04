@@ -13,6 +13,8 @@ func PostPengunjung(ctx echo.Context) error{
 	resp.Message = "error post"
 
 	pengunjung := new(Pengunjung)
+	DK := new(DatabaseKeys)
+
 	err := ctx.Bind(pengunjung)
 	if err != nil{
 		return ctx.JSON(http.StatusNotFound, resp)
@@ -32,6 +34,18 @@ func PostPengunjung(ctx echo.Context) error{
 	if err != nil{
 		return ctx.JSON(http.StatusNotFound, resp)
 	}
+
+	DK.UserID = pengunjung.ID
+	DK.Username = "pengunjung1"
+	DK.EncryptionKey = "123"
+	DK.Password = "321"
+	DK.GenPwd()
+
+	err = DK.DatabaseKeyPost()
+	if err != nil{
+		return ctx.JSON(http.StatusNotFound, resp)
+	}
+
 	resp.Error = false
 	resp.Message = "success post"
 	resp.Data = pengunjung
