@@ -4,9 +4,11 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/hmac"
+	"crypto/md5"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"io"
@@ -104,4 +106,10 @@ func (c *Crypt) Decrypt(isResponse bool) error {
 		return nil
 	}
 	return e
+}
+
+func Md5(p []byte) string {
+	hash := md5.New()
+	hash.Write(p)
+	return hex.EncodeToString(hash.Sum(nil))
 }
