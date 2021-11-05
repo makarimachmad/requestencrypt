@@ -31,4 +31,9 @@ type (
 		Errors        string      `json:"errors,omitempty"`
 		DecryptedData interface{} `json:"decrypted_data,omitempty"`
 	}
+
+	Pengunjung struct{
+		Req	[]byte
+		Crypt
+	}
 )
