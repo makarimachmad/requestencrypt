@@ -11,29 +11,30 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
-func EncryptionInit() (err error) {
-	a := []rune(SecretKey)
-	if len(a) < 32 {
-		err = errors.New("init panjang enkripsi error")
-		return
-	}
+func LicenseVariable(){
 
-	salt := string(a[0:12])
-	key := []byte(string(a[0:32]))
-
-	Block, err = aes.NewCipher(key)
+	err := godotenv.Load(".env")
 	if err != nil{
-		err = errors.New("init blok enkripsi gagal")
-		return
+		fmt.Println("Gagal memuat file env")
 	}
+	SecretKEY = os.Getenv("SECRET_KEY")
+}
 
-	EncSalt = hasher256(salt)
+func EncryptionInit() {
+	a := []rune(SecretKEY)
+	Salt = string(a[0:12])
+	Key = []byte(string(a[0:32]))
+	Block, _ = aes.NewCipher(Key)
+	EncSalt = hasher256(Salt)
 	PreSalt = EncSalt[0:SaltLen]
 	PostSalt = EncSalt[len(EncSalt)-SaltLen:]
-	return
 }
 
 func hasher256(text string) []byte{
@@ -57,7 +58,6 @@ func (c *Crypt) Encrypt(isRequest bool) error {
 
 	ivEnc := ivBlock[:aes.BlockSize]
 	io.ReadFull(rand.Reader, ivEnc)
-
 	cipher.NewCTR(Block, ivEnc).XORKeyStream(enc, c.PlainText)
 
 	encData = append(PreSalt, ivEnc...)
@@ -79,18 +79,19 @@ func (c *Crypt) Decrypt(isResponse bool) error {
 	e := errors.New("can't decrypt data")
 
 	if isResponse {
-		ciphertext, _ = base64.StdEncoding.DecodeString(c.Res.Data)
+		ciphertext, _ = base64.StdEncoding.DecodeString(c.CipherText)
 	} else {
 		if c.CipherText == "" {
+
 			return e
 		}
 		ciphertext, _ = base64.StdEncoding.DecodeString(c.CipherText)
 	}
 
 	iv = ciphertext[SaltLen : aes.BlockSize+SaltLen]
-
 	ivLen = len(iv)
 	sha2len = 32
+	
 	hmacLen = SaltLen + ivLen + sha2len
 	hmacOri = ciphertext[SaltLen+ivLen : hmacLen]
 
@@ -113,3 +114,4 @@ func Md5(p []byte) string {
 	hash.Write(p)
 	return hex.EncodeToString(hash.Sum(nil))
 }
+
