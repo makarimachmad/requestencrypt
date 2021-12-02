@@ -1,6 +1,7 @@
 package user
 
 import (
+	"log"
 	"requestencrypt/database"
 	"strconv"
 )
@@ -8,6 +9,7 @@ import (
 func (p *Pengunjung) PengunjungPost()error {
 	db, err := database.ConnectDB()
 	if err != nil{
+		log.Println("connectDB")
 		return err
 	}
 	db.Create(&p)
